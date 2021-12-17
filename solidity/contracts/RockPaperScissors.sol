@@ -25,11 +25,11 @@ contract RockPaperScissors is Ownable {
         PlayType play;
     }
 
-    mapping(address => Bet) playersBetting;
+    mapping(address => Bet) private playersBetting;
     uint256 public currentSimultaneousBets = 0;
     uint256 public maxSimultaneousBets;
     MatchResult[3][3] public matchResult;
-    IERC20 public token; //Ropstein WEENUS
+    IERC20 public token;
     uint256 public acumulatedFee = 0;
 
     event BetEvent(address from, uint256 amount, PlayType play);
