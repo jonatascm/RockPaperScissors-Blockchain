@@ -27,7 +27,6 @@ contract RockPaperScissors is Ownable {
 
     mapping(address => Bet) private playersBetting;
     address[] public players;
-    uint256 public currentSimultaneousBets = 0;
     uint256 public maxSimultaneousBets;
     MatchResult[3][3] public matchResult;
     IERC20 public token;
@@ -64,7 +63,7 @@ contract RockPaperScissors is Ownable {
 
     function bet(uint256 _amount, PlayType _play) public {
         require(
-            currentSimultaneousBets < maxSimultaneousBets,
+            players.length < maxSimultaneousBets,
             "Maximum simultaneous bets exceeded"
         );
         require(
@@ -80,7 +79,6 @@ contract RockPaperScissors is Ownable {
         playersBetting[msg.sender] = playerBet;
         players.push(msg.sender);
         emit BetEvent(msg.sender, _amount, _play);
-        currentSimultaneousBets++;
     }
 
     function getGameFee(uint256 _amount) public pure returns (uint256) {
