@@ -26,6 +26,7 @@ contract RockPaperScissors is Ownable {
     }
 
     mapping(address => Bet) private playersBetting;
+    address[] public players;
     uint256 public currentSimultaneousBets = 0;
     uint256 public maxSimultaneousBets;
     MatchResult[3][3] public matchResult;
@@ -77,6 +78,7 @@ contract RockPaperScissors is Ownable {
         Bet memory playerBet = Bet(_amount, _play);
         token.transferFrom(msg.sender, address(this), _amount);
         playersBetting[msg.sender] = playerBet;
+        players.push(msg.sender);
         emit BetEvent(msg.sender, _amount, _play);
         currentSimultaneousBets++;
     }
@@ -119,7 +121,7 @@ contract RockPaperScissors is Ownable {
             token.transfer(msg.sender, amountResult / 2);
             token.transfer(_opponent, amountResult / 2);
         }
-
+        _removeItemFromArray(_opponent);
         emit PlayAgainstEvent(msg.sender, _opponent, result);
     }
 
@@ -137,5 +139,22 @@ contract RockPaperScissors is Ownable {
         token.transfer(owner(), acumulatedFee);
         emit WidthdrawFee(owner(), acumulatedFee);
         acumulatedFee = 0;
+    }
+
+    function _removeItemFromArray(address player) private {
+        bool found = false;
+        for (uint256 i = 0; i < players.length; i++) {
+            if (players[i] == player) {
+                found = true;
+            }
+            if (found && i < players.length - 1) {
+                players[i] = players[i + 1];
+            }
+        }
+        players.pop();
+    }
+
+    function getPlayers() public view returns (address[] memory) {
+        return players;
     }
 }

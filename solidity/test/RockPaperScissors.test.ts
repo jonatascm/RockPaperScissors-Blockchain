@@ -114,13 +114,14 @@ describe("RockPaperScissors", function () {
   });
 
   describe("Betting", () => {
-    it("Should bet 50 token in rock", async () => {
+    it("Should bet 50 token in rock and players should be 1", async () => {
       await testToken.connect(addr1).approve(rockPaperScissors.address, 50);
 
       const initalBalance = await testToken.balanceOf(addr1.address);
       await rockPaperScissors.connect(addr1).bet(50, rockNumber);
       const finalBalance = await testToken.balanceOf(addr1.address);
-
+      const players = await rockPaperScissors.getPlayers();
+      expect(players.length).to.equal(1);
       expect(finalBalance.toNumber()).to.equal(initalBalance.toNumber() - 50);
     });
 
@@ -172,6 +173,9 @@ describe("RockPaperScissors", function () {
 
       const initalBalance = await testToken.balanceOf(addr2.address);
       await rockPaperScissors.connect(addr2).battle(addr1.address, paperNumber);
+
+      const finalPlayers = await rockPaperScissors.getPlayers();
+      expect(finalPlayers.length).to.equal(0);
 
       const finalBalance = await testToken.balanceOf(addr2.address);
       expect(finalBalance.toNumber()).greaterThan(initalBalance.toNumber());
